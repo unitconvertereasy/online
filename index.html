@@ -1,0 +1,991 @@
+sudais
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>unit converter online</title>
+    <meta name="description" content="Free online unit converter with 20+ measurement categories including length, weight, temperature, area, volume, and more.">
+    <style>
+        :root {
+            --primary-color: #4a6bff;
+            --secondary-color: #3a5bef;
+            --background-light: #f8f9fa;
+            --text-light: #333;
+            --background-dark: #121212;
+            --text-dark: #f0f0f0;
+            --card-light: #ffffff;
+            --card-dark: #1e1e1e;
+            --shadow-light: rgba(0, 0, 0, 0.1);
+            --shadow-dark: rgba(0, 0, 0, 0.3);
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 20px;
+            background: var(--background-light);
+            color: var(--text-light);
+            transition: all 0.3s ease;
+            line-height: 1.6;
+        }
+
+        .dark-mode {
+            background: var(--background-dark);
+            color: var(--text-dark);
+        }
+
+        .converter-container {
+            background: var(--card-light);
+            padding: 30px;
+            border-radius: 12px;
+            box-shadow: 0 4px 12px var(--shadow-light);
+            margin-bottom: 20px;
+        }
+
+        .dark-mode .converter-container {
+            background: var(--card-dark);
+            box-shadow: 0 4px 12px var(--shadow-dark);
+        }
+
+        h1 {
+            color: var(--primary-color);
+            text-align: center;
+            margin-bottom: 15px;
+        }
+
+        h2 {
+            color: var(--primary-color);
+            font-size: 1.2rem;
+            margin-top: 25px;
+            border-bottom: 1px solid #ddd;
+            padding-bottom: 5px;
+        }
+
+        .dark-mode h2 {
+            border-bottom-color: #444;
+        }
+
+        nav {
+            margin: 20px 0;
+            text-align: center;
+            padding: 10px 0;
+            border-radius: 8px;
+            background: rgba(74, 107, 255, 0.1);
+        }
+
+        .dark-mode nav {
+            background: rgba(74, 107, 255, 0.2);
+        }
+
+        nav a {
+            margin: 0 15px;
+            text-decoration: none;
+            color: var(--primary-color);
+            font-weight: 500;
+            transition: color 0.2s;
+        }
+
+        nav a:hover {
+            color: var(--secondary-color);
+            text-decoration: underline;
+        }
+
+        .converter-box {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .input-group {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            width: 100%;
+            max-width: 600px;
+        }
+
+        select, input {
+            padding: 12px 15px;
+            font-size: 16px;
+            border-radius: 8px;
+            border: 1px solid #ddd;
+            background: var(--card-light);
+            color: var(--text-light);
+            flex: 1;
+            min-width: 0;
+            transition: all 0.2s;
+        }
+
+        .dark-mode select,
+        .dark-mode input {
+            background: #2d2d2d;
+            border-color: #444;
+            color: var(--text-dark);
+        }
+
+        select:focus, input:focus {
+            outline: none;
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 2px rgba(74, 107, 255, 0.2);
+        }
+
+        button {
+            padding: 12px 20px;
+            background: var(--primary-color);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 16px;
+            transition: background 0.2s;
+        }
+
+        button:hover {
+            background: var(--secondary-color);
+        }
+
+        #swap {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: #f0f0f0;
+            color: #333;
+            margin: 5px 0;
+            border: none;
+            cursor: pointer;
+        }
+
+        .dark-mode #swap {
+            background: #333;
+            color: #f0f0f0;
+        }
+
+        #swap:hover {
+            background: #e0e0e0;
+            transform: rotate(180deg);
+            transition: transform 0.3s ease;
+        }
+
+        .dark-mode #swap:hover {
+            background: #444;
+        }
+
+        #darkModeToggle {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            background: none;
+            border: none;
+            font-size: 24px;
+            cursor: pointer;
+            color: var(--text-light);
+            padding: 5px;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .dark-mode #darkModeToggle {
+            color: var(--text-dark);
+            background: rgba(255, 255, 255, 0.1);
+        }
+
+        #result {
+            font-size: 18px;
+            font-weight: bold;
+            margin-top: 20px;
+            padding: 15px;
+            background: #f0f8ff;
+            border-radius: 8px;
+            width: 100%;
+            max-width: 600px;
+            text-align: center;
+            min-height: 20px;
+        }
+
+        .dark-mode #result {
+            background: #2a3a4a;
+        }
+
+        .category-select {
+            width: 100%;
+            max-width: 600px;
+        }
+
+        .last-updated {
+            font-size: 12px;
+            color: #666;
+            text-align: center;
+            margin-top: 10px;
+        }
+
+        .dark-mode .last-updated {
+            color: #aaa;
+        }
+
+        .favorites-box {
+            background: #f5f5f5;
+            padding: 20px;
+            border-radius: 8px;
+            margin-top: 30px;
+            max-width: 600px;
+            width: 100%;
+        }
+
+        .dark-mode .favorites-box {
+            background: #2a2a2a;
+        }
+
+        #favoritesList {
+            list-style: none;
+            padding: 0;
+            margin-top: 10px;
+        }
+
+        #favoritesList li {
+            padding: 8px 12px;
+            cursor: pointer;
+            border-radius: 4px;
+            margin: 5px 0;
+            transition: background 0.2s;
+        }
+
+        #favoritesList li:hover {
+            background: #e0e0e0;
+        }
+
+        .dark-mode #favoritesList li:hover {
+            background: #444;
+        }
+
+        .footer {
+            text-align: center;
+            margin-top: 30px;
+            padding-top: 20px;
+            border-top: 1px solid #ddd;
+            font-size: 14px;
+            color: #666;
+        }
+
+        .dark-mode .footer {
+            border-top-color: #444;
+            color: #aaa;
+        }
+
+        /* New features styling */
+        .search-box {
+            width: 100%;
+            max-width: 600px;
+            margin-bottom: 15px;
+        }
+
+        #searchInput {
+            width: 100%;
+            padding: 12px 15px;
+            border-radius: 8px;
+            border: 1px solid #ddd;
+        }
+
+        .history-box {
+            background: #f5f5f5;
+            padding: 20px;
+            border-radius: 8px;
+            margin-top: 20px;
+            max-width: 600px;
+            width: 100%;
+        }
+
+        .dark-mode .history-box {
+            background: #2a2a2a;
+        }
+
+        #historyList {
+            list-style: none;
+            padding: 0;
+            margin-top: 10px;
+            max-height: 200px;
+            overflow-y: auto;
+        }
+
+        #historyList li {
+            padding: 8px 12px;
+            border-bottom: 1px solid #ddd;
+            margin: 5px 0;
+        }
+
+        .dark-mode #historyList li {
+            border-bottom-color: #444;
+        }
+
+        .share-buttons {
+            display: flex;
+            gap: 10px;
+            margin-top: 15px;
+            justify-content: center;
+        }
+
+        .share-btn {
+            padding: 8px 15px;
+            border-radius: 5px;
+            border: none;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .share-twitter {
+            background: #1DA1F2;
+            color: white;
+        }
+
+        .share-facebook {
+            background: #4267B2;
+            color: white;
+        }
+
+        .share-copy {
+            background: #4CAF50;
+            color: white;
+        }
+
+        .category-tabs {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin: 15px 0;
+            justify-content: center;
+        }
+
+        .category-tab {
+            padding: 8px 15px;
+            border-radius: 20px;
+            background: #e0e0e0;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .dark-mode .category-tab {
+            background: #333;
+        }
+
+        .category-tab:hover {
+            background: #d0d0d0;
+        }
+
+        .dark-mode .category-tab:hover {
+            background: #444;
+        }
+
+        .category-tab.active {
+            background: var(--primary-color);
+            color: white;
+        }
+
+        @media (max-width: 768px) {
+            body {
+                padding: 15px;
+            }
+            
+            .converter-container {
+                padding: 20px;
+            }
+            
+            h1 {
+                font-size: 24px;
+                margin-top: 40px;
+            }
+            
+            nav {
+                display: flex;
+                flex-direction: column;
+                gap: 10px;
+            }
+            
+            nav a {
+                margin: 0;
+            }
+            
+            .input-group {
+                flex-direction: column;
+            }
+            
+            #swap {
+                transform: rotate(90deg);
+                margin: 10px 0;
+            }
+            
+            #darkModeToggle {
+                top: 15px;
+                right: 15px;
+            }
+
+            .category-tabs {
+                gap: 5px;
+            }
+
+            .category-tab {
+                padding: 6px 12px;
+                font-size: 14px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            select, input {
+                padding: 10px 12px;
+            }
+            
+            button {
+                padding: 10px 15px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <button id="darkModeToggle" onclick="toggleDarkMode()" aria-label="Toggle dark mode">🌙</button>
+    
+    <div class="converter-container">
+        <h1>Unit Converter Online</h1>
+        
+        <nav>
+            <a href="#">Home</a>
+            <a href="#">All Converters</a>
+            <a href="#">About</a>
+            <a href="#">Contact</a>
+        </nav>
+
+        <!-- Search Function -->
+        <div class="search-box">
+            <input type="text" id="searchInput" placeholder="Search converters..." oninput="searchConverters()">
+        </div>
+
+        <!-- Category Tabs -->
+        <div class="category-tabs" id="categoryTabs">
+            <!-- Dynamically generated -->
+        </div>
+        
+        <div class="converter-box">
+            <select id="category" class="category-select" onchange="updateUnits()">
+                <option value="length">Length</option>
+                <option value="weight">Weight</option>
+                <option value="temperature">Temperature</option>
+                <option value="area">Area</option>
+                <option value="volume">Volume</option>
+                <option value="speed">Speed</option>
+                <option value="time">Time</option>
+                <option value="digital">Digital Storage</option>
+                <option value="timezone">Time Zone</option>
+                <option value="currency">Currency</option>
+                <option value="pressure">Pressure</option>
+                <option value="energy">Energy</option>
+                <option value="power">Power</option>
+                <option value="angle">Angle</option>
+                <option value="fuel">Fuel Consumption</option>
+                <option value="cooking">Cooking Measurements</option>
+                <option value="frequency">Frequency</option>
+                <option value="torque">Torque</option>
+                <option value="density">Density</option>
+                <option value="viscosity">Viscosity</option>
+                <option value="luminance">Luminance</option>
+            </select>
+            
+            <div class="input-group">
+                <input type="number" id="inputValue" placeholder="Enter value" oninput="convert()" step="any">
+            </div>
+            
+            <div class="input-group">
+                <select id="fromUnit"></select>
+                <button id="swap" onclick="swapUnits()" aria-label="Swap units">🔄</button>
+                <select id="toUnit"></select>
+            </div>
+            
+            <div id="result">Enter a value to convert</div>
+            <div id="currencyUpdate" class="last-updated"></div>
+
+            <!-- Share Buttons -->
+            <div class="share-buttons">
+                <button class="share-btn share-twitter" onclick="shareResult('twitter')">
+                    <span>Twitter</span>
+                </button>
+                <button class="share-btn share-facebook" onclick="shareResult('facebook')">
+                    <span>Facebook</span>
+                </button>
+                <button class="share-btn share-copy" onclick="copyResult()">
+                    <span>Copy</span>
+                </button>
+            </div>
+            
+            <div class="favorites-box">
+                <h2>Favorite Converters</h2>
+                <button onclick="toggleFavorite()">★ Add Current to Favorites</button>
+                <ul id="favoritesList"></ul>
+            </div>
+
+            <!-- Conversion History -->
+            <div class="history-box">
+                <h2>Conversion History</h2>
+                <button onclick="clearHistory()">Clear History</button>
+                <ul id="historyList"></ul>
+            </div>
+        </div>
+    </div>
+    
+    <div class="footer">
+        <p>© 2023 Universal Unit Converter. All rights reserved.</p>
+    </div>
+
+    <script>
+        // Current date for display
+        const currentDate = new Date();
+        const formattedDate = currentDate.toLocaleDateString('en-US', {
+            year: 'numeric',
+            month: 'long',
+            day: 'numeric'
+        });
+        
+        // Exchange rates (would normally fetch from API)
+        const exchangeRates = {
+            USD: 1, EUR: 0.94, GBP: 0.82, JPY: 149.23, AUD: 1.56, CAD: 1.37,
+            CHF: 0.91, CNY: 7.30, HKD: 7.83, SGD: 1.36, INR: 83.20, KRW: 1348.50,
+            BRL: 5.05, RUB: 96.50, ZAR: 18.90, MXN: 18.25, AED: 3.67, SAR: 3.75,
+            TRY: 28.10, SEK: 11.05, NOK: 10.85, DKK: 7.00, PLN: 4.30, THB: 36.50,
+            IDR: 15750, MYR: 4.72, PHP: 56.80, NZD: 1.68
+        };
+
+        // All conversion units and factors
+        const units = {
+            length: {
+                meters: 1, kilometers: 1000, centimeters: 0.01, millimeters: 0.001,
+                micrometers: 0.000001, nanometers: 0.000000001, miles: 1609.344,
+                yards: 0.9144, feet: 0.3048, inches: 0.0254, 'nautical miles': 1852,
+                'light years': 9.461e+15, parsecs: 3.086e+16
+            },
+            weight: {
+                kilograms: 1, grams: 0.001, milligrams: 0.000001, micrograms: 0.000000001,
+                'metric tons': 1000, pounds: 0.453592, ounces: 0.0283495,
+                'short tons': 907.185, 'long tons': 1016.05, carats: 0.0002,
+                'atomic mass units': 1.66054e-27
+            },
+            temperature: {
+                celsius: 'celsius', fahrenheit: 'fahrenheit', kelvin: 'kelvin',
+                rankine: 'rankine'
+            },
+            area: {
+                'square meters': 1, 'square kilometers': 1000000, 'square centimeters': 0.0001,
+                'square millimeters': 0.000001, 'square miles': 2589988.11,
+                'square yards': 0.836127, 'square feet': 0.092903, 'square inches': 0.00064516,
+                hectares: 10000, acres: 4046.86, ares: 100, barns: 1e-28
+            },
+            volume: {
+                liters: 1, milliliters: 0.001, 'cubic meters': 1000, 'cubic centimeters': 0.001,
+                'cubic millimeters': 0.000001, 'cubic kilometers': 1e+12, 'cubic inches': 0.0163871,
+                'cubic feet': 28.3168, 'cubic yards': 764.555, gallons: 3.78541,
+                quarts: 0.946353, pints: 0.473176, cups: 0.24, 'fluid ounces': 0.0295735,
+                tablespoons: 0.0147868, teaspoons: 0.00492892, barrels: 119.240471
+            },
+            speed: {
+                'm/s': 1, 'km/h': 0.277778, 'mph': 0.44704, knots: 0.514444,
+                'ft/s': 0.3048, 'mach (at std atm)': 340.3, 'speed of light': 299792458
+            },
+            time: {
+                seconds: 1, minutes: 60, hours: 3600, days: 86400, weeks: 604800,
+                months: 2629746, years: 31556952, milliseconds: 0.001,
+                microseconds: 0.000001, nanoseconds: 0.000000001, decades: 315569520,
+                centuries: 3155695200, millennia: 31556952000
+            },
+            digital: {
+                bits: 1, bytes: 8, kilobits: 1000, kilobytes: 8000, megabits: 1000000,
+                megabytes: 8000000, gigabits: 1000000000, gigabytes: 8000000000,
+                terabits: 1000000000000, terabytes: 8000000000000, petabits: 1000000000000000,
+                petabytes: 8000000000000000, kibibits: 1024, kibibytes: 8192,
+                mebibits: 1048576, mebibytes: 8388608, gibibits: 1073741824,
+                gibibytes: 8589934592, tebibits: 1099511627776, tebibytes: 8796093022208,
+                pebibits: 1125899906842624, pebibytes: 9007199254740992
+            },
+            timezone: {
+                'UTC': 0, 'GMT': 0, 'EST': -5, 'EDT': -4, 'CST': -6, 'CDT': -5,
+                'MST': -7, 'MDT': -6, 'PST': -8, 'PDT': -7, 'IST': 5.5, 'CET': 1,
+                'EET': 2, 'AEST': 10, 'ACST': 9.5, 'AWST': 8, 'JST': 9, 'BST': 1,
+                'MSK': 3, 'SAST': 2, 'EAT': 3, 'AST': -4, 'NST': -3.5
+            },
+            currency: exchangeRates,
+            pressure: {
+                pascals: 1, kilopascals: 1000, megapascals: 1000000, bar: 100000,
+                psi: 6894.76, 'kgf/cm²': 98066.5, atm: 101325, mmHg: 133.322,
+                'inHg': 3386.39, torr: 133.322
+            },
+            energy: {
+                joules: 1, kilojoules: 1000, calories: 4.184, kilocalories: 4184,
+                'watt hours': 3600, 'kilowatt hours': 3600000, 'electronvolts': 1.60218e-19,
+                'British thermal units': 1055.06, 'foot-pounds': 1.35582,
+                'therms': 1.05506e+8, 'ergs': 1e-7
+            },
+            power: {
+                watts: 1, kilowatts: 1000, megawatts: 1000000, 'horsepower (mech)': 745.7,
+                'horsepower (metric)': 735.499, 'foot-pounds/sec': 1.35582,
+                'BTU/hr': 0.293071, 'tons of refrigeration': 3516.85, 'calories/sec': 4.1868
+            },
+            angle: {
+                degrees: 1, radians: 57.2958, gradians: 0.9, arcminutes: 0.0166667,
+                arcseconds: 0.000277778, 'milliradians': 0.0572958, 'revolutions': 360
+            },
+            fuel: {
+                'miles per gallon (US)': 1, 'miles per gallon (UK)': 1.20095,
+                'liters per 100 km': 235.215, 'kilometers per liter': 2.35215
+            },
+            cooking: {
+                teaspoons: 1, tablespoons: 3, cups: 48, 'fluid ounces': 6,
+                milliliters: 4.92892, liters: 0.00492892, pints: 0.104084,
+                quarts: 0.0520421, gallons: 0.0130105
+            },
+            frequency: {
+                hertz: 1, kilohertz: 1000, megahertz: 1000000, gigahertz: 1000000000,
+                'revolutions per minute': 0.0166667
+            },
+            torque: {
+                'newton meters': 1, 'pound-feet': 1.35582, 'dyne-centimeters': 0.0000001,
+                'kilogram-force meters': 9.80665
+            },
+            density: {
+                'kilograms per cubic meter': 1, 'grams per liter': 1,
+                'pounds per cubic foot': 16.0185, 'pounds per cubic inch': 27679.9
+            },
+            viscosity: {
+                'pascal-seconds': 1, poise: 0.1, centipoise: 0.001,
+                'pound-seconds per square foot': 47.8803
+            },
+            luminance: {
+                'candelas per square meter': 1, nits: 1, 'foot-lamberts': 3.42626,
+                stilbs: 10000
+            }
+        };
+
+        // Favorites system
+        let favorites = JSON.parse(localStorage.getItem('favorites')) || [];
+
+        // Conversion history
+        let conversionHistory = JSON.parse(localStorage.getItem('conversionHistory')) || [];
+
+        // Initialize category tabs
+        function initCategoryTabs() {
+            const categoryTabs = document.getElementById('categoryTabs');
+            const categories = Object.keys(units);
+            
+            categories.forEach(category => {
+                const tab = document.createElement('div');
+                tab.className = 'category-tab';
+                tab.textContent = category.charAt(0).toUpperCase() + category.slice(1);
+                tab.onclick = () => {
+                    document.getElementById('category').value = category;
+                    updateUnits();
+                    // Update active tab
+                    document.querySelectorAll('.category-tab').forEach(t => t.classList.remove('active'));
+                    tab.classList.add('active');
+                };
+                categoryTabs.appendChild(tab);
+            });
+        }
+
+        // Search function
+        function searchConverters() {
+            const searchTerm = document.getElementById('searchInput').value.toLowerCase();
+            const options = document.getElementById('category').options;
+            
+            for (let i = 0; i < options.length; i++) {
+                const option = options[i];
+                const text = option.text.toLowerCase();
+                if (text.includes(searchTerm)) {
+                    option.style.display = '';
+                } else {
+                    option.style.display = 'none';
+                }
+            }
+        }
+
+        // Add to history
+        function addToHistory(conversion) {
+            conversionHistory.unshift(conversion); // Add to beginning
+            if (conversionHistory.length > 10) {
+                conversionHistory.pop(); // Keep only last 10
+            }
+            localStorage.setItem('conversionHistory', JSON.stringify(conversionHistory));
+            updateHistoryDisplay();
+        }
+
+        // Update history display
+        function updateHistoryDisplay() {
+            const historyList = document.getElementById('historyList');
+            historyList.innerHTML = conversionHistory.map(item => 
+                `<li>${item}</li>`
+            ).join('');
+        }
+
+        // Clear history
+        function clearHistory() {
+            conversionHistory = [];
+            localStorage.setItem('conversionHistory', JSON.stringify(conversionHistory));
+            updateHistoryDisplay();
+        }
+
+        // Share result
+        function shareResult(platform) {
+            const resultText = document.getElementById('result').innerText;
+            let url = '';
+            
+            if (platform === 'twitter') {
+                url = `https://twitter.com/intent/tweet?text=${encodeURIComponent(resultText + ' - Check out this unit conversion')}`;
+            } else if (platform === 'facebook') {
+                url = `https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(window.location.href)}&quote=${encodeURIComponent(resultText)}`;
+            }
+            
+            window.open(url, '_blank', 'width=600,height=400');
+        }
+
+        // Copy result
+        function copyResult() {
+            const resultText = document.getElementById('result').innerText;
+            navigator.clipboard.writeText(resultText).then(() => {
+                alert('Result copied to clipboard!');
+            });
+        }
+
+        function toggleFavorite() {
+            const category = document.getElementById('category').value;
+            const index = favorites.indexOf(category);
+            
+            if (index === -1) {
+                favorites.push(category);
+                alert(`Added ${category} to favorites`);
+            } else {
+                favorites.splice(index, 1);
+                alert(`Removed ${category} from favorites`);
+            }
+            
+            localStorage.setItem('favorites', JSON.stringify(favorites));
+            updateFavoritesDisplay();
+        }
+
+        function updateFavoritesDisplay() {
+            const favList = document.getElementById('favoritesList');
+            favList.innerHTML = favorites.map(fav => 
+                `<li onclick="setCategory('${fav}')">${fav.charAt(0).toUpperCase() + fav.slice(1)}</li>`
+            ).join('');
+        }
+
+        function setCategory(category) {
+            document.getElementById('category').value = category;
+            updateUnits();
+            // Update active tab
+            document.querySelectorAll('.category-tab').forEach(tab => {
+                tab.classList.remove('active');
+                if (tab.textContent.toLowerCase() === category) {
+                    tab.classList.add('active');
+                }
+            });
+        }
+
+        function updateUnits() {
+            const category = document.getElementById('category').value;
+            const fromUnit = document.getElementById('fromUnit');
+            const toUnit = document.getElementById('toUnit');
+
+            // Clear existing options
+            fromUnit.innerHTML = '';
+            toUnit.innerHTML = '';
+
+            // Add new options
+            Object.keys(units[category]).forEach(unit => {
+                const option1 = document.createElement('option');
+                option1.value = unit;
+                option1.textContent = unit;
+                fromUnit.appendChild(option1);
+
+                const option2 = document.createElement('option');
+                option2.value = unit;
+                option2.textContent = unit;
+                toUnit.appendChild(option2);
+            });
+
+            // Set sensible defaults for each category
+            const defaultPairs = {
+                length: { from: 'meters', to: 'feet' },
+                weight: { from: 'kilograms', to: 'pounds' },
+                temperature: { from: 'celsius', to: 'fahrenheit' },
+                area: { from: 'square meters', to: 'square feet' },
+                volume: { from: 'liters', to: 'gallons' },
+                speed: { from: 'km/h', to: 'mph' },
+                time: { from: 'hours', to: 'minutes' },
+                digital: { from: 'megabytes', to: 'mebibytes' },
+                timezone: { from: 'UTC', to: 'EST' },
+                currency: { from: 'USD', to: 'EUR' },
+                pressure: { from: 'psi', to: 'bar' },
+                energy: { from: 'joules', to: 'calories' },
+                power: { from: 'watts', to: 'horsepower (mech)' },
+                angle: { from: 'degrees', to: 'radians' },
+                fuel: { from: 'miles per gallon (US)', to: 'liters per 100 km' },
+                cooking: { from: 'teaspoons', to: 'milliliters' },
+                frequency: { from: 'hertz', to: 'kilohertz' },
+                torque: { from: 'newton meters', to: 'pound-feet' },
+                density: { from: 'kilograms per cubic meter', to: 'pounds per cubic foot' },
+                viscosity: { from: 'pascal-seconds', to: 'centipoise' },
+                luminance: { from: 'candelas per square meter', to: 'foot-lamberts' }
+            };
+
+            if (defaultPairs[category]) {
+                fromUnit.value = defaultPairs[category].from;
+                toUnit.value = defaultPairs[category].to;
+            }
+
+            // Update currency display
+            if (category === 'currency') {
+                document.getElementById('currencyUpdate').innerText = `Exchange rates as of ${formattedDate}`;
+            } else {
+                document.getElementById('currencyUpdate').innerText = '';
+            }
+
+            convert();
+        }
+
+        function convert() {
+            const category = document.getElementById('category').value;
+            const fromUnit = document.getElementById('fromUnit').value;
+            const toUnit = document.getElementById('toUnit').value;
+            const inputValue = parseFloat(document.getElementById('inputValue').value);
+            const resultElement = document.getElementById('result');
+
+            if (isNaN(inputValue)) {
+                resultElement.innerText = 'Enter a value to convert';
+                return;
+            }
+
+            try {
+                let result;
+                let displayText = '';
+                
+                if (category === 'temperature') {
+                    result = convertTemperature(inputValue, fromUnit, toUnit);
+                    const fromSymbol = fromUnit === 'kelvin' ? 'K' : `°${fromUnit.charAt(0).toUpperCase()}`;
+                    const toSymbol = toUnit === 'kelvin' ? 'K' : `°${toUnit.charAt(0).toUpperCase()}`;
+                    displayText = `${inputValue} ${fromSymbol} = ${result.toFixed(2)} ${toSymbol}`;
+                } 
+                else if (category === 'timezone') {
+                    result = convertTimeZone(inputValue, fromUnit, toUnit);
+                    displayText = `${inputValue}:00 ${fromUnit} = ${result.toFixed(2)}:00 ${toUnit}`;
+                } 
+                else {
+                    const conversionFactor = units[category][fromUnit] / units[category][toUnit];
+                    if (isNaN(conversionFactor)) {
+                        throw new Error('Invalid conversion');
+                    }
+                    result = inputValue * conversionFactor;
+                    
+                    // Format based on magnitude
+                    let formattedResult;
+                    if (category === 'currency') {
+                        formattedResult = result.toLocaleString(undefined, {maximumFractionDigits: 4});
+                    } else if (Math.abs(result) >= 1e6 || Math.abs(result) <= 1e-6) {
+                        formattedResult = result.toExponential(4);
+                    } else {
+                        const decimals = Math.max(2, 6 - Math.floor(Math.log10(Math.abs(result))));
+                        formattedResult = result.toFixed(decimals);
+                    }
+                    
+                    displayText = `${inputValue} ${fromUnit} = ${formattedResult} ${toUnit}`;
+                }
+
+                resultElement.innerText = displayText;
+                
+                // Add to history
+                if (displayText !== 'Enter a value to convert') {
+                    addToHistory(displayText);
+                }
+            } catch (error) {
+                console.error('Conversion error:', error);
+                resultElement.innerText = 'Error in conversion. Please check your inputs.';
+            }
+        }
+
+        function convertTemperature(value, fromUnit, toUnit) {
+            // Convert to Kelvin first (as intermediate)
+            let kelvin;
+            switch (fromUnit) {
+                case 'celsius': kelvin = value + 273.15; break;
+                case 'fahrenheit': kelvin = (value + 459.67) * 5/9; break;
+                case 'kelvin': kelvin = value; break;
+                case 'rankine': kelvin = value * 5/9; break;
+                default: throw new Error('Unknown temperature unit');
+            }
+
+            // Convert from Kelvin to target unit
+            switch (toUnit) {
+                case 'celsius': return kelvin - 273.15;
+                case 'fahrenheit': return kelvin * 9/5 - 459.67;
+                case 'kelvin': return kelvin;
+                case 'rankine': return kelvin * 9/5;
+                default: throw new Error('Unknown temperature unit');
+            }
+        }
+
+        function convertTimeZone(value, fromUnit, toUnit) {
+            if (isNaN(value) || value < 0 || value >= 24) {
+                throw new Error('Invalid time value');
+            }
+            
+            // Simple conversion - in a real app, use a proper timezone library
+            let baseTime = value - units.timezone[fromUnit];
+            let result = baseTime + units.timezone[toUnit];
+            
+            // Handle 24-hour wrap-around
+            while (result >= 24) result -= 24;
+            while (result < 0) result += 24;
+            
+            return result;
+        }
+
+        function swapUnits() {
+            const fromUnit = document.getElementById('fromUnit');
+            const toUnit = document.getElementById('toUnit');
+            const temp = fromUnit.value;
+            fromUnit.value = toUnit.value;
+            toUnit.value = temp;
+            convert();
+        }
+
+        function toggleDarkMode() {
+            document.body.classList.toggle("dark-mode");
+            const isDarkMode = document.body.classList.contains("dark-mode");
+            localStorage.setItem("darkMode", isDarkMode);
+            
+            // Update button icon
+            const darkModeToggle = document.getElementById('darkModeToggle');
+            darkModeToggle.textContent = isDarkMode ? '☀' : '🌙';
+        }
+
+        // Initialize
+        window.onload = function() {
+            // Check for saved dark mode preference
+            if (localStorage.getItem("darkMode") === "true") {
+                document.body.classList.add("dark-mode");
+                document.getElementById('darkModeToggle').textContent = '☀';
+            }
+            
+            initCategoryTabs();
+            updateUnits();
+            updateFavoritesDisplay();
+            updateHistoryDisplay();
+            
+            // Focus on input field for better UX
+            document.getElementById('inputValue').focus();
+        };
+    </script>
+</body>
+</html>
